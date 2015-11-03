@@ -4,14 +4,12 @@
 
 Name:           python-%{modname}
 Version:        1.0.0
-Release:        0.0.git%{shortcommit}%{?dist}
+Release:        0.1.git%{shortcommit}%{?dist}
 Summary:        Read, modify and write DICOM files with python code
 
 License:        MIT
 URL:            https://github.com/darcymason/%{modname}
 Source0:        https://github.com/darcymason/%{modname}/archive/%{commit}/%{modname}-%{shortcommit}.tar.gz
-Patch0:         pydicom-1.0.0-insert-path-docs.patch
-BuildRequires:  git-core
 BuildArch:      noarch
 
 %description
@@ -84,7 +82,7 @@ data cannot easily be modified.
 Python 3 version.
 
 %prep
-%autosetup -n %{modname}-%{commit} -S git
+%autosetup -n %{modname}-%{commit}
 
 %build
 #pushd source/
@@ -92,15 +90,12 @@ Python 3 version.
  %py3_build
 #popd
 
-sed -i -e "/SPHINXBUILD * = sphinx-build/s/=/?=/" docs/Makefile
-cp -a docs docs-3
 pushd docs
-  SPHINXBUILD=sphinx-build make html
+  export PYTHONPATH=../
+  make html SPHINXBUILD=sphinx-build BUILDDIR=_build-2
+  make html SPHINXBUILD=sphinx-build-%{python3_version} BUILDDIR=_build-3
+  find -name '.buildinfo' -delete
 popd
-pushd docs-3
-  SPHINXBUILD=sphinx-build-%{python3_version} make html
-popd
-find -name '.buildinfo' -delete
 
 %install
 #pushd source/
@@ -117,13 +112,16 @@ export LC_ALL="en_US.UTF-8"
 #popd
 
 %files -n python2-%{modname}
-%doc README.md docs/_build/html
+%doc README.md docs/_build-2/html
 %{python2_sitelib}/%{modname}*
 
 %files -n python3-%{modname}
-%doc README.md docs-3/_build/html
+%doc README.md docs/_build-3/html
 %{python3_sitelib}/%{modname}*
 
 %changelog
+* Tue Nov 03 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.1.gitf6191c7
+- Simplify building docs
+
 * Sat Oct 31 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.0.gitf6191c7
 - Initial package
