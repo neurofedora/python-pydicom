@@ -4,7 +4,7 @@
 
 Name:           python-%{modname}
 Version:        1.0.0
-Release:        0.2.git%{shortcommit}%{?dist}
+Release:        0.3.git%{shortcommit}%{?dist}
 Summary:        Read, modify and write DICOM files with python code
 
 # There are generated data (private dict) in special format from GDCM
@@ -56,7 +56,7 @@ Python 2 version.
 
 %package -n python3-%{modname}
 Summary:        %{summary}
-%{?python_provide:%python_provide python2-%{modname}}
+%{?python_provide:%python_provide python3-%{modname}}
 BuildRequires:  python3-devel python3-setuptools python3-six
 BuildRequires:  python3-sphinx
 # Test deps
@@ -84,6 +84,10 @@ Python 3 version.
 
 %prep
 %autosetup -n %{modname}-%{commit}
+
+# Remove shebang from one of contrib files, users still run this as pythonX /usr/lib...
+# other contrib files also doesn't use shebangs
+sed -i -e '1{\@^#!/usr/bin/python@d}' %{modname}/contrib/dicom_dao.py
 
 %build
 #pushd source/
@@ -123,6 +127,10 @@ export LC_ALL="en_US.UTF-8"
 %{python3_sitelib}/%{modname}*
 
 %changelog
+* Sun Nov 08 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.3.gitf6191c7
+- Fix provide macro for py3 (typo)
+- Remove shebang from dicom_dao.py (non-executable-script)
+
 * Sun Nov 08 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.2.gitf6191c7
 - Include license file
 - Add BSD to license list (generated data) from GDCM
