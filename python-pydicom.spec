@@ -4,10 +4,11 @@
 
 Name:           python-%{modname}
 Version:        1.0.0
-Release:        0.1.git%{shortcommit}%{?dist}
+Release:        0.2.git%{shortcommit}%{?dist}
 Summary:        Read, modify and write DICOM files with python code
 
-License:        MIT
+# There are generated data (private dict) in special format from GDCM
+License:        MIT and BSD
 URL:            https://github.com/darcymason/%{modname}
 Source0:        https://github.com/darcymason/%{modname}/archive/%{commit}/%{modname}-%{shortcommit}.tar.gz
 BuildArch:      noarch
@@ -112,14 +113,20 @@ export LC_ALL="en_US.UTF-8"
 #popd
 
 %files -n python2-%{modname}
+%license %{modname}/license.txt
 %doc README.md docs/_build-2/html
 %{python2_sitelib}/%{modname}*
 
 %files -n python3-%{modname}
+%license %{modname}/license.txt
 %doc README.md docs/_build-3/html
 %{python3_sitelib}/%{modname}*
 
 %changelog
+* Sun Nov 08 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.2.gitf6191c7
+- Include license file
+- Add BSD to license list (generated data) from GDCM
+
 * Tue Nov 03 2015 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 1.0.0-0.1.gitf6191c7
 - Simplify building docs
 
